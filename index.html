@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>물품설명서 작성 자동화 — 품목분류 질의용 초안</title>
+<meta name="description" content="부품 정보를 입력하거나 엑셀로 여러 건 올리면 품목분류 질의용 물품설명서(품명 / 구조 및 형태 / 기능 및 용도 / 성분(함량) 및 제조공정 / 제출서류 목록 / 품목분류 의견) 초안을 만들고 누락 항목을 점검합니다. 파일은 브라우저 안에서만 처리합니다.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://build-2611-07.jobability.co.kr/">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="생성형 AI 업무자동화 전문가과정 · 2차수">
+<meta property="og:url" content="https://build-2611-07.jobability.co.kr/">
+<meta property="og:title" content="물품설명서 작성 자동화 — 생성형 AI 업무자동화 전문가과정 2차수">
+<meta property="og:description" content="부품 정보를 넣으면 품목분류 질의용 물품설명서 초안과 누락 점검, 인쇄용 양식·엑셀을 만듭니다.">
+<meta property="og:image" content="https://build-2611-07.jobability.co.kr/og-index.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<nav class="topnav" aria-label="주요 메뉴">
+  <div class="topnav-inner">
+    <a class="topnav-brand" href="dashboard.html">수출입통관 업무 대시보드 <small>build-2611-07 · 기획 최창섭</small></a>
+    <ul class="topnav-links">
+      <li><a href="index.html" class="active" aria-current="page">물품설명서</a></li>
+      <li><a href="dashboard.html">대시보드</a></li>
+      <li><a href="tracking.html">화물 추적</a></li>
+      <li><a href="errors.html">오류점수</a></li>
+      <li><a href="library.html">자료 목록</a></li>
+      <li><a href="guide.html">사용법</a></li>
+      <li><a href="plan.html">기획서</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">생성형 AI 업무자동화 전문가과정 · 2차수 · 프로젝트 07</div>
+  <h1>물품설명서 작성 자동화</h1>
+  <p>부품 정보를 넣거나 엑셀로 여러 건 올리면 <b>품목분류 질의용 물품설명서</b> 초안을 만듭니다.
+     물품설명서 양식 6절(품명 / 구조 및 형태 / 기능 및 용도 / 성분(함량) 및 제조공정 / 제출서류 목록 / 품목분류 의견)에 맞춰 초안을 채우고 <b>빠진 정보</b>를 짚어 줍니다.
+     HS 코드는 <b>후보</b>로만 적습니다. 최종 판단은 담당자가 합니다.</p>
+</div></header>
+
+<main><div class="wrap">
+
+<div class="note lead-link" id="lead-dash"><b>수출입통관 업무 대시보드</b> — ERP·환급·관세청 엑셀을 올려 수출입 통관 실적, FTA 절감액, 관세환급, 오류점수, 품목분류 결정문 현황을 한 화면에서 봅니다.
+  <a href="dashboard.html">대시보드 열기</a> · <a href="dashboard.html#example" id="go-dash-sample">예제 대시보드 바로 보기</a> · <a href="tracking.html">v1.2 수입보세화물 추적(단계 알림 메일 초안)</a> · <a href="library.html">통관 서식·매뉴얼 자료 목록</a></div>
+
+<section id="s-input" class="card">
+  <h2 style="margin-top:0">1. 부품 정보를 넣으세요</h2>
+  <p class="sub">엑셀(.xlsx) 한 장에 부품 한 건이 한 줄입니다. 양식을 내려받아 채우거나, 예제로 먼저 해 보세요.</p>
+  <label class="drop" id="drop">
+    <input type="file" id="file" accept=".xlsx,.xls,.csv">
+    <b>엑셀 파일을 끌어다 놓거나 눌러서 고르세요</b>
+    <span>파일은 서버로 올라가지 않습니다 · 브라우저 안에서만 처리합니다</span>
+  </label>
+  <div class="btnrow">
+    <button class="btn primary" id="btn-sample">예제로 해보기</button>
+    <button class="btn" id="btn-template">빈 양식 내려받기</button>
+    <button class="btn" id="btn-new">한 건 직접 입력</button>
+  </div>
+  <div id="data-status"></div>
+  <div id="items"></div>
+</section>
+
+<section id="s-draft" class="card" hidden>
+  <h2 style="margin-top:0">2. 물품설명서 초안</h2>
+  <div class="ctrl">
+    <label>부품 <select id="pick"></select></label>
+    <span class="sub" id="pick-info"></span>
+  </div>
+  <div id="check"></div>
+
+  <details class="box" id="edit-box">
+    <summary>부품 정보 고치기</summary>
+    <div class="fgrid" id="fields"></div>
+  </details>
+
+  <details class="box">
+    <summary>문체 맞추기 — 과거 작성 사례 붙여넣기</summary>
+    <p class="sub">예전에 쓴 물품설명서 문장을 붙여 넣으면 문장 끝맺음(…입니다 / …이다 / …임·함)을 따라 씁니다.
+       내용은 옮기지 않고 문체만 참고합니다.</p>
+    <textarea id="example" rows="5" placeholder="예: 본 물품은 굴착기 붐에 장착되는 실린더 커버임. 강판을 프레스 성형 후 도장함."></textarea>
+    <div class="ctrl">
+      <label>문체 <select id="style">
+        <option value="auto">사례에서 자동</option>
+        <option value="nida">…입니다</option>
+        <option value="ida">…이다</option>
+        <option value="ham">…임·함</option>
+      </select></label>
+      <span class="sub" id="style-info"></span>
+      <button class="btn" id="btn-ex-sample" type="button">가상 사례 넣어 보기</button>
+    </div>
+  </details>
+
+  <details class="box">
+    <summary>양식 칸 이름 바꾸기</summary>
+    <p class="sub">기본 칸 이름은 기획자가 보낸 물품설명서 양식(2026-11-04)의 6절 가운데 2~6절입니다(1절 품명은 머리글로 찍습니다). 공식 서식을 이 도구가 정한 것은 아닙니다.
+       양식이 바뀌면 칸 이름을 여기서 바꿀 수 있습니다. 바꾼 이름은 이 브라우저에 저장됩니다.</p>
+    <div class="fgrid" id="labels"></div>
+    <div class="btnrow"><button class="btn" id="btn-labels-reset" type="button">기본 이름으로</button></div>
+  </details>
+
+  <div id="sections"></div>
+</section>
+
+<section id="s-ai" class="card" hidden>
+  <h2 style="margin-top:0">3. AI 로 다듬기 (선택)</h2>
+  <p class="sub">키가 없어도 위 규칙 초안은 그대로 씁니다. AI 는 문장을 다듬고 빠진 정보를 짚는 보조입니다.</p>
+  <div class="ctrl">
+    <label>제공자 <select id="ai-provider">
+      <option value="openai">OpenAI · gpt-4o-mini</option>
+      <option value="anthropic">Anthropic · claude-haiku-5-5</option>
+    </select></label>
+    <label>API 키 <input type="password" id="ai-key" autocomplete="off" placeholder="sk-…"></label>
+    <span class="sub">키는 이 브라우저에만 저장됩니다.</span>
+  </div>
+  <div class="warn">
+    <b>보내기 전에 확인하세요.</b> 지금 고른 부품의 정보와 초안, 붙여 넣은 사례가 외부 AI 서비스로 전송됩니다.
+    사내 보안 규정상 외부 전송이 허용된 자료인지 먼저 확인해 주세요.
+    <label class="chk"><input type="checkbox" id="ai-agree"> 외부로 보내도 되는 자료임을 확인했습니다</label>
+  </div>
+  <div class="btnrow"><button class="btn primary" id="btn-ai" disabled>이 부품 AI 로 다듬기</button></div>
+  <div id="ai-out"></div>
+</section>
+
+<section id="s-out" class="card" hidden>
+  <h2 style="margin-top:0">4. 내보내기</h2>
+  <p class="sub">고친 문장과 반영한 AI 문장이 그대로 들어갑니다. 누락 항목과 확인할 점도 함께 남습니다.</p>
+  <div class="btnrow">
+    <button class="btn green" id="btn-xlsx">엑셀로 내보내기</button>
+    <button class="btn" id="btn-preview">인쇄용 양식 보기 (전체)</button>
+    <button class="btn" id="btn-print">인쇄하기</button>
+  </div>
+  <div id="preview" class="preview"></div>
+</section>
+
+</div></main>
+
+<footer><div class="wrap">
+  생성형 AI 업무자동화 전문가과정 2차수 · 프로젝트 07 · 기획 최창섭 ·
+  예제 데이터는 실제 사내 데이터가 아닙니다 · 품목분류 의견은 초안이며 최종 판단은 담당자가 합니다.
+</div></footer>
+
+<script src="lib/xlsx.full.min.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

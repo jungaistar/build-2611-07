@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대시보드 — 수출입통관 업무 대시보드</title>
+<meta name="description" content="ERP·환급프로그램·관세청에서 내려받은 엑셀을 올리면 수출입 통관 실적, FTA 활용·절감액, 관세환급, 수출입 오류점수를 집계해 보여 줍니다. 파일은 브라우저 안에서만 처리합니다.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://build-2611-07.jobability.co.kr/dashboard.html">
+<meta name="robots" content="index,follow">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/dash.css">
+</head>
+<body>
+
+<nav class="topnav" aria-label="주요 메뉴">
+  <div class="topnav-inner">
+    <a class="topnav-brand" href="dashboard.html">수출입통관 업무 대시보드 <small>build-2611-07 · 기획 최창섭</small></a>
+    <ul class="topnav-links">
+      <li><a href="index.html">물품설명서</a></li>
+      <li><a href="dashboard.html" class="active" aria-current="page">대시보드</a></li>
+      <li><a href="tracking.html">화물 추적</a></li>
+      <li><a href="errors.html">오류점수</a></li>
+      <li><a href="library.html">자료 목록</a></li>
+      <li><a href="guide.html">사용법</a></li>
+      <li><a href="plan.html">기획서</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">생성형 AI 업무자동화 전문가과정 · 2차수 · 프로젝트 07 · v1.3</div>
+  <h1>수출입통관 업무 대시보드</h1>
+  <p>ERP·환급프로그램·관세청에서 내려받은 엑셀을 올리면 <b>수출입 통관 실적, FTA 활용·절감액, 관세환급, 오류점수, 품목분류 결정문 현황</b>을 한 화면에 모읍니다.
+     매일 새 엑셀을 올리면 그 데이터로 바뀝니다. 열 이름이 달라도 같은 뜻 낱말로 찾고, 못 찾은 열은 직접 고릅니다.
+     수입보세화물 단계 알림은 <a href="tracking.html" style="color:#fff">화물 추적</a>에 있습니다.</p>
+</div></header>
+
+<main><div class="wrap">
+
+<section class="card" id="d-map">
+  <h2 style="margin-top:0">수출입통관 업무 7항목과 이 도구</h2>
+  <p class="sub">기획자가 정리한 대시보드 구조(2026-11-04 「수출입통관업무Dashboard」 총괄 시트)입니다. 항목마다 이 도구의 어디에서 하는지 적었습니다.</p>
+  <div class="tablewrap"><table class="map7">
+    <thead><tr><th>항목</th><th>하는 일</th><th>자료 · 주기</th><th>As-Is → To-Be</th><th>이 도구에서</th></tr></thead>
+    <tbody>
+      <tr><td>1. 수출입통관 실적</td><td>수입: 물자대·관세·관세부담율 / 수출: 전년 대비 증감 — 본부·국가·업체·HS 4단위</td><td>ERP 엑셀 · 매일</td><td>매월 1일 전월 분석 뒤 메일 공유 → 매일 대시보드</td><td><a href="#d-upload" data-go-tab="trade">「수출입 실적」 탭</a></td></tr>
+      <tr><td>2. FTA 수출입 실적</td><td>FTA 체결국 수입·수출 신고 건의 관세 절감 실적</td><td>ERP 엑셀 · 매일</td><td>→ 매일 대시보드, 메일로 공유할 화면</td><td><a href="#d-upload" data-go-tab="fta">「FTA」 탭</a></td></tr>
+      <tr><td>3. 관세환급 실적</td><td>본부별 매월 환급 실적</td><td>환급프로그램 엑셀 · 매월</td><td>→ 월별 표</td><td><a href="#d-upload" data-go-tab="refund">「관세환급」 탭</a></td></tr>
+      <tr><td>4. 수출입 오류점수</td><td>신고·오류 건수, 오류점수, 비율</td><td>관세청 엑셀 · 매월</td><td>→ 월별·구분별</td><td><a href="#d-upload" data-go-tab="errors">「오류점수」 탭</a> · <a href="errors.html">v1.3 오류점수 분석(인천·울산)</a></td></tr>
+      <tr><td>5. 물품설명서 작성</td><td>고세율 수입부품의 저세율 품목분류 질의용 물품설명서, 결정문 접수 때 고정비 절감 모니터링</td><td>양식 · 결정문 현황 엑셀 · 수시</td><td>엑셀 프롬프트 양식으로 AI 질문 뒤 복사·붙여넣기 → 자동 작성</td><td><a href="index.html">「물품설명서」 화면</a> · <a href="#d-upload" data-go-tab="ruling">「품목분류 결정문」 탭</a></td></tr>
+      <tr><td>6. 수입보세화물 Tracking</td><td>근무시간 외 BL 의 입항보고·수입신고 단계를 관세사·요청자에게 알림</td><td>유니패스 · ERP · 비정기</td><td>포워더가 입항 예정 공유 → 단계별 메일 안내</td><td><a href="tracking.html">「화물 추적」 화면</a></td></tr>
+      <tr><td>7. 수출입통관 Archive</td><td>세관 제출 사유서, ERP 통합 업무 매뉴얼 보관·공유</td><td>문서 · 비정기</td><td>요청 때 메일 → 목록 링크 공유</td><td><a href="library.html">「자료 목록」 화면</a></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="d-upload" class="card">
+  <h2 style="margin-top:0">1. 엑셀을 올리세요</h2>
+  <p class="sub">수입·수출 실적(ERP), 관세환급(환급프로그램), 오류점수(관세청), 품목분류 결정문 현황 엑셀을 한꺼번에 올려도 됩니다. 파일마다 종류를 알아봅니다.</p>
+  <label class="drop" id="d-drop">
+    <input type="file" id="d-file" accept=".xlsx,.xls,.csv" multiple>
+    <b>엑셀 파일을 끌어다 놓거나 눌러서 고르세요 (여러 개 가능)</b>
+    <span>파일은 서버로 올라가지 않습니다 · 브라우저 안에서만 처리합니다</span>
+  </label>
+  <div class="btnrow">
+    <button class="btn primary" id="btn-dash-sample">예제로 해보기</button>
+    <a class="btn" href="samples/예제_수입통관실적_ERP.xlsx" download>예제 엑셀 받기(수입)</a>
+    <button class="btn" id="btn-dash-clear" type="button">저장된 데이터 지우기</button>
+  </div>
+  <p class="sub" style="margin-top:10px">예제는 가짜 업체·본부의 2024-01~2025-10 데이터입니다. 예제 데이터는 실제 사내 데이터가 아닙니다.
+    예제 엑셀 5종은 <code>samples/</code> 폴더에 있습니다.</p>
+  <label class="chk"><input type="checkbox" id="d-remember" checked> 올린 데이터를 이 브라우저에 기억하기(다음에 열 때 다시 올리지 않아도 됩니다)</label>
+  <div id="d-msg"></div>
+  <div id="d-sets"></div>
+</section>
+
+<section id="d-view" class="card" hidden>
+  <div class="dfilter" id="d-filter">
+    <label>기간 <select id="f-from"></select> ~ <select id="f-to"></select></label>
+    <label>본부 <select id="f-hq"></select></label>
+    <label>국가 <select id="f-country"></select></label>
+    <label>금액 단위 <select id="f-unit"><option>원</option><option>천원</option><option>백만원</option><option>USD</option></select></label>
+    <button class="btn" id="btn-f-reset" type="button">기간 처음대로</button>
+    <button class="btn green" id="btn-dash-xlsx" type="button">엑셀로 내보내기</button>
+  </div>
+  <p class="sub" id="f-note"></p>
+
+  <div class="tabs" role="tablist" aria-label="분석 종류">
+    <button role="tab" class="tab" data-tab="trade" aria-selected="true">수출입 실적</button>
+    <button role="tab" class="tab" data-tab="fta" aria-selected="false">FTA</button>
+    <button role="tab" class="tab" data-tab="refund" aria-selected="false">관세환급</button>
+    <button role="tab" class="tab" data-tab="errors" aria-selected="false">오류점수</button>
+    <button role="tab" class="tab" data-tab="ruling" aria-selected="false">품목분류 결정문</button>
+  </div>
+
+  <div class="tabpanel" id="t-trade" role="tabpanel">
+    <div class="kpis" id="kpi-trade"></div>
+    <div class="ctrl">
+      <label>묶는 기준 <select id="by-trade">
+        <option value="hq">본부</option><option value="country">국가</option><option value="company">업체</option><option value="hs4">HS 4단위</option>
+      </select></label>
+      <label>상위 <select id="top-trade"><option>5</option><option selected>10</option><option>20</option></select></label>
+    </div>
+    <div class="charts" id="ch-trade"></div>
+    <div id="tb-trade"></div>
+  </div>
+  <div class="tabpanel" id="t-fta" role="tabpanel" hidden>
+    <div class="kpis" id="kpi-fta"></div>
+    <div class="ctrl">
+      <label>묶는 기준 <select id="by-fta"><option value="hq">본부</option><option value="country">국가</option><option value="company">업체</option></select></label>
+    </div>
+    <div class="charts" id="ch-fta"></div>
+    <div id="tb-fta"></div>
+  </div>
+  <div class="tabpanel" id="t-refund" role="tabpanel" hidden>
+    <div class="kpis" id="kpi-refund"></div>
+    <div class="charts" id="ch-refund"></div>
+    <div id="tb-refund"></div>
+  </div>
+  <div class="tabpanel" id="t-errors" role="tabpanel" hidden>
+    <div class="kpis" id="kpi-errors"></div>
+    <div class="charts" id="ch-errors"></div>
+    <div id="tb-errors"></div>
+  </div>
+  <div class="tabpanel" id="t-ruling" role="tabpanel" hidden>
+    <div class="kpis" id="kpi-ruling"></div>
+    <div class="ctrl">
+      <label>묶는 기준 <select id="by-ruling"><option value="product">완제품</option><option value="broker">관세사</option><option value="hs4">HS 4단위(결정세번)</option></select></label>
+    </div>
+    <div class="charts" id="ch-ruling"></div>
+    <div id="tb-ruling"></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2 style="margin-top:0">이번 판에서 하지 않는 것</h2>
+  <ul class="ul">
+    <li><b>메일 자동 발송·유니패스 자동 감시</b> — <a href="tracking.html">화물 추적</a>은 사람이 엑셀을 올리거나 「조회」를 눌렀을 때 읽고, 메일은 초안까지만 만듭니다.</li>
+    <li><b>ERP·관세청 시스템 자동 연결</b> — 「실시간」은 매일 내려받은 엑셀을 다시 올려 갱신하는 방식입니다. 올린 날짜와 데이터 기간을 위에 표시합니다.</li>
+    <li>통관 서식·업무 매뉴얼 파일 보관 — <a href="library.html">자료 목록</a>에 이름·설명·사내 위치만 등록합니다.</li>
+  </ul>
+</section>
+
+</div></main>
+
+<footer><div class="wrap">
+  생성형 AI 업무자동화 전문가과정 2차수 · 프로젝트 07 · 기획 최창섭 ·
+  예제 데이터는 실제 사내 데이터가 아닙니다 · 화면의 숫자는 올린 엑셀에서 계산한 값입니다.
+</div></footer>
+
+<script src="lib/xlsx.full.min.js"></script>
+<script src="js/customs.js"></script>
+<script src="js/dash.js"></script>
+<script>
+  // 7항목 표의 탭 링크 — 올린 자료가 있을 때 그 탭을 연다
+  document.getElementById('d-map').addEventListener('click', function (e) {
+    var a = e.target.closest('[data-go-tab]'); if (!a) return;
+    var b = document.querySelector('.tab[data-tab="' + a.dataset.goTab + '"]'); if (b && !document.getElementById('d-view').hidden) b.click();
+  });
+</script>
+</body>
+</html>

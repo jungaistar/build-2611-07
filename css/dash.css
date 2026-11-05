@@ -1,0 +1,80 @@
+/* 대시보드·자료 목록 전용(v1.1) — style.css · app.css 뒤에 읽는다 */
+.dfilter{display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; font-size:14px;}
+.dfilter label{display:flex; flex-wrap:wrap; align-items:center; gap:6px;}
+.dfilter select{font:inherit; font-size:14px; padding:6px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; max-width:100%;}
+#f-note{margin:10px 0 0;}
+
+.tabs{display:flex; flex-wrap:wrap; gap:4px; border-bottom:2px solid var(--line); margin:18px 0 16px;}
+.tab{font:inherit; font-size:14.5px; font-weight:700; color:var(--sub); background:none; border:0; border-bottom:3px solid transparent;
+  margin-bottom:-2px; padding:10px 14px; cursor:pointer; min-height:44px;}
+.tab:hover{color:var(--ink);}
+.tab.on{color:var(--brand); border-bottom-color:var(--brand);}
+
+.kpis{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(210px,100%),1fr)); gap:12px; margin-bottom:14px;}
+.kpi{border:1px solid var(--line); border-radius:11px; padding:14px 16px; background:#fbfdff; display:flex; flex-direction:column; gap:3px; min-width:0;}
+.kpi-l{font-size:13px; font-weight:700; color:var(--sub);}
+.kpi-v{font-size:24px; line-height:1.2; font-weight:750; color:var(--brand-deep); font-variant-numeric:tabular-nums;}
+.kpi small{font-size:12.5px; color:var(--sub);}
+.kpi-how{font-size:11.5px; color:#0b3a4f; background:#dceaf3; border-radius:4px; padding:1px 6px; align-self:flex-start; margin-top:4px;}
+.kpi.empty{background:#f7f8fa; border-style:dashed;}
+.kpi.empty .kpi-v{font-size:18px; color:var(--sub);}
+
+.charts{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(460px,100%),1fr)); gap:14px; margin:6px 0 16px; align-items:start;}
+.chart-box{border:1px solid var(--line); border-radius:11px; padding:10px 12px 6px; background:#fff; margin:0; min-width:0; overflow-x:auto;}
+.chart-box figcaption{font-size:13.5px; font-weight:700; margin-bottom:4px;}
+svg.chart{display:block; width:100%; height:auto;}
+/* 좁은 화면에서 그림을 줄이면 글자가 읽히지 않는다 — 최소 폭을 두고 상자 안에서 옆으로 밀어 본다 */
+@media (max-width:640px){ svg.chart{min-width:520px;} .kpis{grid-template-columns:repeat(auto-fill,minmax(min(118px,100%),1fr)); gap:8px;} .kpi{padding:10px 12px;} .kpi-v{font-size:20px;} }
+svg.chart .grid{stroke:#e3e9ef; stroke-width:1;}
+svg.chart .ax{font-size:11px; fill:#5b6b7b; font-family:inherit;}
+svg.chart .lab{fill:#152232;}
+svg.chart .lg{font-size:12px; fill:#152232; font-family:inherit;}
+
+.tb-h{margin:18px 0 8px; font-size:15px;}
+tr.sum td{font-weight:750; background:#f4f7fa;}
+tr.rest td{color:var(--sub);}
+th.num{text-align:right;}
+span.pos{color:var(--ok); font-weight:650;} span.neg{color:var(--danger); font-weight:650;}
+td.wrapcell{white-space:normal; min-width:140px; max-width:320px;}
+table.map{margin-top:8px;} table.map select{font:inherit; font-size:13.5px; padding:4px 6px; border:1px solid var(--line); border-radius:6px; max-width:220px;}
+tr.maprow > td{background:#fbfcfd; white-space:normal;}
+small.req{color:var(--danger); font-weight:700;}
+#d-sets select{font:inherit; font-size:13.5px; padding:4px 6px; border:1px solid var(--line); border-radius:6px;}
+
+/* 자료 목록 */
+.lib-form{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr)); gap:10px 12px; margin:8px 0;}
+.lib-form label{display:flex; flex-direction:column; gap:4px; font-size:13px; color:var(--sub); min-width:0;}
+.lib-form label.wide{grid-column:1/-1;}
+.lib-form input,.lib-form select,.lib-form textarea{font:inherit; font-size:14px; padding:6px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; max-width:100%;}
+.lib-cats{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0;}
+.lib-cats button{font:inherit; font-size:13px; border:1px solid var(--line); background:#fff; border-radius:999px; padding:4px 12px; cursor:pointer; min-height:34px;}
+.lib-cats button.on{background:var(--brand); color:#fff; border-color:var(--brand);}
+td.loc{white-space:normal; word-break:break-all; min-width:160px; max-width:360px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px;}
+td.desc{white-space:normal; min-width:180px; max-width:360px;}
+.lead-link{margin-top:12px;}
+
+[hidden]{display:none !important;}
+
+/* (v1.2) 7항목 표 · 결정문 목록 · 화물 추적 */
+table.map7 td{white-space:normal; min-width:120px; vertical-align:top;}
+table.ruling-list td,table.ruling-by td:first-child{text-align:left;}
+table.ruling-list td.num{text-align:left; font-variant-numeric:normal;}
+.chips{display:inline-flex; gap:3px;}
+.chip{display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; border:1px solid var(--line); background:#f4f7fa; color:var(--sub); font-size:11.5px; font-weight:700;}
+.chip.done{background:var(--ok); border-color:var(--ok); color:#fff;}
+.tag.ah-t{background:#fde7c8; color:#7a4f00;}
+table.ships td{white-space:normal; vertical-align:top;}
+table.ships td.mono{white-space:nowrap;}
+.alert-box{border:1px solid var(--line); border-left:4px solid var(--danger); border-radius:10px; padding:12px 16px; margin:12px 0; background:#fffdfb;}
+.alert-box .sec-h{margin-bottom:4px;}
+.alert-box label.sub{display:flex; flex-direction:column; gap:3px; margin:8px 0 6px;}
+.alert-box input,.alert-box textarea,#t-tpl input,#t-tpl textarea{font:inherit; font-size:14px; padding:6px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; max-width:100%;}
+.alert-box textarea,#t-tpl textarea{width:100%;}
+#t-tpl label.sub{display:flex; flex-direction:column; gap:3px; margin:6px 0;}
+#t-targets{gap:8px 16px;}
+.ctrl input[type=text],.ctrl input[type=password]{font:inherit; font-size:14px; padding:6px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; max-width:100%;}
+.btn[aria-disabled="true"]{opacity:.45; pointer-events:none;}
+
+/* (v1.3) 오류점수 */
+tr.over td{background:#fdeae7;}
+table.ledger input{font:inherit; font-size:13px; padding:4px 6px; border:1px solid var(--line); border-radius:6px; min-width:90px; width:100%;}

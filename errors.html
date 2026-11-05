@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수출입 오류점수 분석 — 인천 · 울산 · 분기 경계 · 관리대장</title>
+<meta name="description" content="관세청 유니패스 귀책사유자별 오류현황 및 상세목록 엑셀을 올리면 신고번호로 인천 · 울산을 나눠 월별 오류점수, 분기 경계, 항목별 원인, AEO 관리대장 표, 공유 메일 초안을 만듭니다.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://build-2611-07.jobability.co.kr/errors.html">
+<meta name="robots" content="index,follow">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/dash.css">
+</head>
+<body>
+<nav class="topnav" aria-label="주요 메뉴">
+  <div class="topnav-inner">
+    <a class="topnav-brand" href="index.html">수출입통관 업무 <small>build-2611-07 · 기획 최창섭</small></a>
+    <ul class="topnav-links">
+      <li><a href="index.html">물품설명서</a></li>
+      <li><a href="dashboard.html">대시보드</a></li>
+      <li><a href="tracking.html">화물 추적</a></li>
+      <li><a href="errors.html" class="active" aria-current="page">오류점수</a></li>
+      <li><a href="library.html">자료 목록</a></li>
+      <li><a href="guide.html">사용법</a></li>
+      <li><a href="plan.html">기획서</a></li>
+    </ul>
+  </div>
+</nav>
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">생성형 AI 업무자동화 전문가과정 · 2차수 · 프로젝트 07 · v1.3</div>
+  <h1>수출입 오류점수 분석</h1>
+  <p>유니패스에서 받은 <b>수입 · 수출 귀책사유자별 오류현황 및 상세목록</b> 엑셀을 올리면 신고번호로 <b>인천 · 울산</b>을 나눠 월별 표, 분기 경계, 항목별 원인, 관리대장 표, 공유 메일 초안을 만듭니다. 파일은 이 브라우저 안에서만 읽습니다.</p>
+</div></header>
+<main><div class="wrap">
+
+<section id="e-upload" class="card">
+  <h2 style="margin-top:0">1. 엑셀 올리기</h2>
+  <p class="sub">수입 · 수출 파일을 함께 고릅니다. 시트 이름의 「상세」「현황」「요약」과 「N월」로 읽습니다.</p>
+  <div class="btnrow">
+    <label class="btn primary">파일 고르기<input type="file" id="e-file" accept=".xlsx,.xls" multiple style="display:none"></label>
+    <button class="btn" id="e-sample" type="button">예제로 해보기(가짜 수치)</button>
+    <button class="btn" id="e-clear" type="button">비우기</button>
+  </div>
+  <div id="e-msg"></div>
+</section>
+
+<section id="e-rule" class="card" hidden>
+  <h2 style="margin-top:0">2. 인천 · 울산 구분과 경계</h2>
+  <p class="sub">신고번호 앞 5자리(신고대행 관세사부호)가 고른 부호이면 울산, 아니면 인천입니다. 기본값은 기획 메일의 43908 하나입니다. 이 자료에 나온 부호를 전부 보여 주니 필요한 부호를 더 고르세요.</p>
+  <div id="e-brokers"></div>
+  <div class="ctrl" style="margin-top:12px"><label>분기 오류점수 경계 <input type="text" id="e-th" inputmode="numeric" value="300" style="width:6em"></label><span class="sub">분기 300점 이상이면 실물서류 제출 대상(기획 메일). 어느 범위에 적용되는지 확정 전이라 모든 범위를 보입니다.</span></div>
+</section>
+
+<section id="e-view" class="card" hidden>
+  <h2 style="margin-top:0">3. 현황</h2>
+  <div id="e-cards"></div>
+  <h3 class="tb-h">월별 표</h3><div id="e-table"></div>
+  <h3 class="tb-h">분기 경계</h3><div id="e-quarters"></div>
+  <h3 class="tb-h">담당자 요약 표와 대조</h3><div id="e-compare"></div>
+  <h3 class="tb-h">인천 신고건수</h3>
+  <p class="sub">요약 시트에 있으면 그 값을 씁니다. 새 달은 수출입실적분석의 건수를 넣으세요. 울산 = 총신고건 − 인천입니다.</p>
+  <div id="e-counts"></div>
+  <h3 class="tb-h">항목별 원인</h3>
+  <div class="ctrl"><label>범위 <select id="e-scope"></select></label></div>
+  <div id="e-items"></div>
+</section>
+
+<section id="e-ledger" class="card" hidden>
+  <h2 style="margin-top:0">4. 관리대장 — 발생사유 및 정정내용</h2>
+  <p class="sub">오류점수가 있는 신고번호만 보입니다. 사업부 · 사유 · 귀책 · 담당자는 사람이 적습니다. 비워 두면 사유 칸에 정정 내역이 들어갑니다. 적은 내용은 이 브라우저에만 남습니다.</p>
+  <div class="ctrl"><label>월 <select id="e-lmonth"></select></label></div>
+  <div id="e-ltable"></div>
+</section>
+
+<section id="e-mail" class="card" hidden>
+  <h2 style="margin-top:0">5. 공유 메일 초안</h2>
+  <p class="sub">보내지 않습니다. 복사해 사유를 다듬은 뒤 사람이 보냅니다.</p>
+  <div class="ctrl"><label>월 <select id="e-mmonth"></select></label></div>
+  <input type="text" id="e-msub" style="width:100%;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:7px;margin-bottom:8px" aria-label="제목">
+  <textarea id="e-mbody" rows="18" style="width:100%" aria-label="본문"></textarea>
+  <div class="btnrow"><button class="btn" id="e-mcopy" type="button">본문 복사</button><button class="btn green" id="e-xlsx" type="button">엑셀로 내보내기(요약 · 대장 · 분기 · 항목 · 상세)</button></div>
+</section>
+
+</div></main>
+<footer><div class="wrap">생성형 AI 업무자동화 전문가과정 2차수 · 프로젝트 07 · 기획 최창섭 · 예제는 가짜 데이터이며 실제 사내 데이터가 아닙니다.</div></footer>
+<script src="lib/xlsx.full.min.js"></script>
+<script src="js/errscore.js"></script>
+<script src="js/errors.js"></script>
+</body>
+</html>

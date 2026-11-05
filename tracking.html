@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수입보세화물 추적 — 수출입통관 업무 대시보드</title>
+<meta name="description" content="BL 번호를 등록하고 ERP 엑셀이나 유니패스 조회 결과를 넣으면 입항보고 제출·수입신고 같은 단계가 새로 생긴 건을 골라 관세사·요청자에게 보낼 메일 초안을 만듭니다. 메일은 보내지 않습니다.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://build-2611-07.jobability.co.kr/tracking.html">
+<meta name="robots" content="index,follow">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/dash.css">
+</head>
+<body>
+
+<nav class="topnav" aria-label="주요 메뉴">
+  <div class="topnav-inner">
+    <a class="topnav-brand" href="dashboard.html">수출입통관 업무 대시보드 <small>build-2611-07 · 기획 최창섭</small></a>
+    <ul class="topnav-links">
+      <li><a href="index.html">물품설명서</a></li>
+      <li><a href="dashboard.html">대시보드</a></li>
+      <li><a href="tracking.html" class="active" aria-current="page">화물 추적</a></li>
+      <li><a href="errors.html">오류점수</a></li>
+      <li><a href="library.html">자료 목록</a></li>
+      <li><a href="guide.html">사용법</a></li>
+      <li><a href="plan.html">기획서</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">생성형 AI 업무자동화 전문가과정 · 2차수 · 프로젝트 07 · v1.2</div>
+  <h1>수입보세화물 Tracking</h1>
+  <p>BL 번호를 등록해 두고 <b>ERP 수입화물 진행현황 엑셀</b>이나 <b>유니패스 조회 결과</b>를 넣으면, 「입항보고 제출」「수입신고」처럼 알려야 할 단계가 새로 생긴 건만 골라
+     관세사·요청자에게 보낼 <b>메일 초안</b>을 만듭니다. 퇴근 후·주말 처리 건은 「시간 외」로 표시합니다. 메일은 보내지 않고, 초안을 메일 앱으로 넘깁니다.</p>
+</div></header>
+
+<main><div class="wrap">
+
+<section class="card" id="t-reg">
+  <h2 style="margin-top:0">1. 추적할 BL 을 등록하세요</h2>
+  <p class="sub">통관 요청이 들어온 BL 번호와 알릴 사람(관세사·요청자)을 적습니다. 목록은 이 브라우저에만 저장됩니다.</p>
+  <div class="fgrid">
+    <label>BL 번호 <small>필수</small><input type="text" id="f-bl" placeholder="예: ABCD12345678"></label>
+    <label>선명<input type="text" id="f-ship" placeholder="선박 이름"></label>
+    <label>입항예정일<input type="date" id="f-eta"></label>
+    <label>요청자 이름<input type="text" id="f-req-name" placeholder="현업 담당"></label>
+    <label>요청자 메일<input type="text" id="f-req-email" placeholder="여러 개는 쉼표로"></label>
+    <label>관세사 이름<input type="text" id="f-brk-name" placeholder="통관 관세사·관세법인"></label>
+    <label>관세사 메일<input type="text" id="f-brk-email" placeholder="여러 개는 쉼표로"></label>
+    <label class="wide">메모<input type="text" id="f-memo" placeholder="긴급 여부, 품목 등"></label>
+  </div>
+  <div class="btnrow">
+    <button class="btn primary" id="btn-add" type="button">등록</button>
+    <button class="btn" id="btn-sample" type="button">예제 넣기(가짜 BL 3건)</button>
+    <button class="btn" id="btn-clear" type="button">전부 지우기</button>
+  </div>
+  <div id="t-msg"></div>
+</section>
+
+<section class="card" id="t-import">
+  <h2 style="margin-top:0">2. 진행 단계를 가져오세요</h2>
+  <p class="sub">세 가지 중 편한 방법으로 넣습니다. 같은 BL · 같은 단계 · 같은 처리일시는 두 번 들어가지 않으니 하루에 몇 번이든 다시 넣어도 됩니다.</p>
+
+  <div class="box" style="background:#fff">
+    <h3>(a) ERP 「수입화물 진행현황」 엑셀 올리기</h3>
+    <label class="drop" id="t-drop" style="margin-top:8px">
+      <input type="file" id="t-file" accept=".xlsx,.xls,.csv">
+      <b>엑셀 파일을 끌어다 놓거나 눌러서 고르세요</b>
+      <span>BL 번호 · 처리단계 · 처리일시 열이 있으면 됩니다 · 파일은 서버로 올라가지 않습니다</span>
+    </label>
+    <div class="btnrow"><button class="btn" id="btn-xlsx-sample" type="button">예제 엑셀로 해보기</button></div>
+    <div id="t-xlsx-map"></div>
+    <div id="t-xlsx-msg"></div>
+  </div>
+
+  <div class="box" style="background:#fff">
+    <h3>(b) 유니패스 OpenAPI 조회 결과(XML) 붙여 넣기</h3>
+    <p class="sub">관세청 유니패스 「수입화물 진행정보」 OpenAPI 응답을 그대로 붙여 넣습니다. 태그 이름이 달라도 처리일시·처리구분·장치장을 찾아 읽습니다.</p>
+    <textarea id="t-xml" rows="6" placeholder="<cargCsclPrgsInfoQryRtnVo> … </cargCsclPrgsInfoQryRtnVo>"></textarea>
+    <div class="btnrow"><button class="btn primary" id="btn-xml-read" type="button">읽기</button><button class="btn" id="btn-xml-sample" type="button">예시 XML 넣어 보기</button></div>
+    <div id="t-xml-msg"></div>
+    <div id="t-xml-out"></div>
+  </div>
+
+  <div class="box" style="background:#fff">
+    <h3>(c) OpenAPI 로 직접 조회 (인증키가 있을 때)</h3>
+    <p class="sub">유니패스에 등록한 인증키를 넣고 「조회」를 누르면 그때만 관세청 서버를 부릅니다. 키는 이 브라우저에만 저장되고 어디로도 보내지 않습니다.
+       브라우저가 다른 사이트의 요청을 막으면(CORS) 조회 주소를 새 탭에 열어 나온 XML 을 (b) 에 붙여 넣으면 됩니다.</p>
+    <div class="ctrl">
+      <label>인증키 <input type="password" id="api-key" autocomplete="off" placeholder="crkyCn"></label>
+      <label>BL 종류 <select id="api-kind"><option value="hbl">House BL</option><option value="mbl">Master BL</option></select></label>
+      <label>BL 연도 <input type="text" id="api-year" size="5" placeholder="올해"></label>
+      <label>BL <select id="api-bl"></select></label>
+      <button class="btn primary" id="btn-api" type="button">조회</button>
+    </div>
+    <div id="api-msg"></div>
+  </div>
+</section>
+
+<section class="card" id="t-status">
+  <h2 style="margin-top:0">3. 현황</h2>
+  <div id="t-list"></div>
+  <div class="btnrow"><button class="btn green" id="btn-track-xlsx" type="button">엑셀로 내보내기(현황 · 진행단계 · 알림)</button></div>
+</section>
+
+<section class="card" id="t-notify">
+  <h2 style="margin-top:0">4. 알림 — 메일 초안 <span class="tag" id="t-alert-count"></span></h2>
+  <p class="sub">아래 단계가 새로 생긴 건마다 초안을 만듭니다. 제목·본문을 고친 뒤 「메일 앱으로 열기」를 누르면 메일 앱에서 보내기를 누르는 것은 사람입니다. 보낸 뒤 「통보함으로 표시」를 누르면 같은 건을 다시 알리지 않습니다.</p>
+  <div class="ctrl" id="t-targets"></div>
+  <div class="ctrl">
+    <label>보낸 사람 이름 <input type="text" id="t-sender" placeholder="통관 담당 홍길동"></label>
+    <label>근무 시간 <input type="text" id="h-start" size="5"> ~ <input type="text" id="h-end" size="5"></label>
+    <span class="sub">밖이면 「시간 외」</span>
+  </div>
+  <div id="t-alerts"></div>
+  <details class="box">
+    <summary>메일 틀 바꾸기</summary>
+    <div id="t-tpl"></div>
+    <div class="btnrow"><button class="btn" id="btn-tpl-reset" type="button">기본 틀로</button></div>
+  </details>
+</section>
+
+<section class="card">
+  <h2 style="margin-top:0">이번 판에서 하지 않는 것</h2>
+  <ul class="ul">
+    <li><b>메일 자동 발송</b> — 초안을 만들고 메일 앱으로 넘기기까지입니다. 보내는 것은 사람이 합니다.</li>
+    <li><b>유니패스 자동 감시</b> — 정해진 시각마다 스스로 조회하지 않습니다. 사람이 엑셀을 올리거나 「조회」를 누를 때 읽습니다. 자동 감시는 사내 서버(배치)에서 할 일입니다.</li>
+    <li><b>공휴일 판정</b> — 「시간 외」는 근무 시간 밖과 토·일만 봅니다.</li>
+    <li>카카오톡 발송 — 한 줄 문구를 복사해 붙여 넣는 방식입니다.</li>
+  </ul>
+</section>
+
+</div></main>
+
+<footer><div class="wrap">
+  생성형 AI 업무자동화 전문가과정 2차수 · 프로젝트 07 · 기획 최창섭 ·
+  예제 BL 은 실제 화물이 아닙니다 · 메일은 보내지 않고 초안까지만 만듭니다.
+</div></footer>
+
+<script src="lib/xlsx.full.min.js"></script>
+<script src="js/cargo.js"></script>
+<script src="js/track.js"></script>
+</body>
+</html>

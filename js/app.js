@@ -142,6 +142,16 @@
       ['예제 데이터는 실제 사내 데이터가 아닙니다.']]), '안내');
     XLSX.writeFile(wb, '물품설명서_초안_' + new Date().toISOString().slice(0, 10) + '.xlsx');
   }
+  /** 워드(.docx) — 엔진이 만든 XML 조각을 zip 으로 묶는다(SheetJS 에 든 CFB 를 쓴다, 외부 라이브러리 없음) */
+  function exportDocx() {
+    var files = Doc.docxFiles(entries(), state.labels, { guide: $('docx-guide').checked }), z = XLSX.CFB.utils.cfb_new({ type: 'zip' }), enc = new TextEncoder();
+    Object.keys(files).forEach(function (k) { XLSX.CFB.utils.cfb_add(z, k, enc.encode(files[k])); });
+    var out = XLSX.CFB.write(z, { fileType: 'zip', type: 'array' });
+    var blob = new Blob([out instanceof Uint8Array ? out : new Uint8Array(out)], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    var name = '물품설명서_초안_' + new Date().toISOString().slice(0, 10) + '.docx', a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  }
   function rowOf(it) { var o = { 관리번호: it.id }; Doc.FIELDS.forEach(function (f) { if (f.key !== 'id') o[f.label] = it[f.key] || ''; }); return o; }
   function template(withSample) {
     var wb = XLSX.utils.book_new();
@@ -205,6 +215,7 @@
     (state.edits[it.id] = state.edits[it.id] || {})[k] = { text: r.sections[k], source: 'ai' }; renderDraft();
   });
   $('btn-xlsx').addEventListener('click', exportXlsx);
+  $('btn-docx').addEventListener('click', exportDocx);
   $('btn-preview').addEventListener('click', preview);
   $('btn-print').addEventListener('click', function () { preview(); window.print(); });
   renderLabels();

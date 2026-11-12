@@ -533,7 +533,37 @@ var EB = ES.exportBook({ summary: S, rows: B.rows, decls: DC, notes: {} }); eq(E
 // 예제
 var SB = ES.sampleBooks().map(function (b) { return ES.readWorkbook(b.sheets, b.name); }); eq(SB.map(function (b) { return b.kind; }), ['수입', '수출'], '예제 2권'); var SS = ES.summarize(SB, ES.countsFromBooks(SB)); eq(SS.months, [7, 8, 9], '예제 3개월'); var SC = ES.compare(SB, SS); eq(SC.scoreDiffs.length, 2, '예제의 어긋난 달 인천·울산 2칸'); not(JSON.stringify(SB), '에이치디', '예제에 회사 이름 없음');
 
-console.log('v1.3 ' + (passed + failed - v12) + '개 검사');
+/* ───────────── v1.4 워드(.docx) 내보내기 ───────────── */
+var v13 = passed + failed;
+(function () {
+  var Doc = D;
+  var items = Doc.normalize(Doc.sample()).items;
+  var en = items.map(function (it) { var d = Doc.draft(it); return { item: it, check: Doc.check(it), sections: d.sections }; });
+  var xml = Doc.docxDocument(en), plain = xml.replace(/<[^>]+>/g, '\n').replace(/\n+/g, '\n');
+  ok(/^<\?xml[^>]*\?><w:document /.test(xml) && /<\/w:body><\/w:document>$/.test(xml), 'v1.4 문서 XML 머리 · 꼬리');
+  ok((xml.match(/<w:p>/g) || []).length === (xml.match(/<\/w:p>/g) || []).length && (xml.match(/<w:r>/g) || []).length === (xml.match(/<\/w:r>/g) || []).length, 'v1.4 여는 태그와 닫는 태그 수가 같다');
+  ok((plain.match(/물 품 설 명 서/g) || []).length === 3 && (xml.match(/<w:pageBreakBefore\/>/g) || []).length === 2, 'v1.4 부품 3건 — 제목 3번, 둘째부터 새 쪽');
+  ['1. 품명(모델, 규격 등 포함)', '2. 구조 및 형태', '3. 기능 및 용도', '4. 성분(함량) 및 제조공정', '5. 제출서류 목록', '6. 품목분류 의견'].forEach(function (h) { ok(plain.split(h).length === 4, 'v1.4 절 제목 「' + h + '」가 부품마다'); });
+  ok(/<w:sz w:val="40"\/>/.test(xml) && /<w:sz w:val="32"\/>/.test(xml) && /<w:sz w:val="24"\/>/.test(xml) && /<w:jc w:val="center"\/>/.test(xml), 'v1.4 양식 글자 크기 — 제목 20pt · 절 16pt · 본문 12pt, 제목 가운데');
+  ok(/w:w="11906" w:h="16838"/.test(xml) && /w:top="1701" w:right="1440" w:bottom="1440" w:left="1440"/.test(xml), 'v1.4 A4 · 양식과 같은 여백');
+  ok(plain.indexOf('☞ Invoice 품명, 거래품명, 상표명, 모델, 타입, 규격, HS CODE 등') > 0 && (plain.match(/☞ /g) || []).length === 3 * 10, 'v1.4 양식의 작성 안내 줄(부품마다 10줄)');
+  ok((Doc.docxDocument(en, null, { guide: false }).match(/☞/g) || []).length === 0, 'v1.4 작성 안내 줄을 뺄 수 있다');
+  var e0 = en[0], st = e0.sections[0].text;
+  ok(plain.indexOf(st.split('\n')[0]) > 0 && plain.indexOf('품명 : ' + e0.item.name) > 0 && plain.indexOf('HS 후보(검토 필요) : ') > 0, 'v1.4 초안 문장 · 품명 · HS 후보가 그대로 들어간다');
+  var ed = [{ item: Object.assign({}, e0.item, { name: 'A & B <테스트>', brand: '', size: '' }), check: e0.check, sections: e0.sections.map(function (s, i) { return i ? s : Object.assign({}, s, { text: '첫 줄\n\n셋째 줄 <b> & 끝', source: 'ai' }); }) }];
+  var x2 = Doc.docxDocument(ed, { opinion: '세번 검토 의견' });
+  ok(/A &amp; B &lt;테스트&gt;/.test(x2) && /셋째 줄 &lt;b&gt; &amp; 끝/.test(x2) && !/<b>/.test(x2), 'v1.4 & < > 는 글자로 넣는다(문서가 깨지지 않게)');
+  ok(/>첫 줄<\/w:t><\/w:r><\/w:p><w:p><w:pPr>[^]*?<\/w:pPr><\/w:p><w:p>[^]*?셋째 줄/.test(x2), 'v1.4 줄바꿈은 문단으로, 빈 줄도 남긴다');
+  ok(/AI 초안 반영 — 검토 필요/.test(x2) && /6\. 세번 검토 의견/.test(x2) && !/상표 : /.test(x2) && !/규격 : /.test(x2), 'v1.4 AI 반영 표시 · 바꾼 칸 이름 · 빈 값은 줄을 만들지 않는다');
+  var miss = Doc.normalize([{ 관리번호: 'M-1', 품명: '이름만' }]).items, em = miss.map(function (it) { var d = Doc.draft(it); return { item: it, check: Doc.check(it), sections: d.sections }; });
+  ok(/누락 \d+건\(/.test(Doc.docxDocument(em)) && /\[확인 필요/.test(Doc.docxDocument(em)), 'v1.4 누락 건수와 「확인 필요」 표시가 워드에도 남는다');
+  var f = Doc.docxFiles(en);
+  eq(Object.keys(f).sort(), ['[Content_Types].xml', '_rels/.rels', 'word/_rels/document.xml.rels', 'word/document.xml', 'word/styles.xml'], 'v1.4 docx 안의 파일 5개');
+  ok(/맑은 고딕/.test(f['word/styles.xml']) && /word\/document\.xml/.test(f['[Content_Types].xml']) && !/\d+(\.\d+)?\s*%/.test(f['word/document.xml'].replace(/<[^>]+>/g, '')), 'v1.4 글꼴 맑은 고딕 · 관세율 수치 없음');
+  ok(Doc.docxDocument([]).indexOf('<w:sectPr>') > 0, 'v1.4 부품이 없어도 열리는 문서');
+})();
+console.log('v1.4 ' + (passed + failed - v13) + '개 검사');
+console.log('v1.3 ' + (v13 - v12) + '개 검사');
 console.log('v1.0 ' + v10 + ' · v1.1 ' + (v11 - v10) + ' · v1.2 ' + (v12 - v11) + '개 검사');
 console.log('\n통과 ' + passed + ' · 실패 ' + failed);
 process.exit(failed ? 1 : 0);

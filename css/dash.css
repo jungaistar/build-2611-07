@@ -78,3 +78,7 @@ table.ships td.mono{white-space:nowrap;}
 /* (v1.3) 오류점수 */
 tr.over td{background:#fdeae7;}
 table.ledger input{font:inherit; font-size:13px; padding:4px 6px; border:1px solid var(--line); border-radius:6px; min-width:90px; width:100%;}
+
+/* v1.4 — 좁은 화면에서 긴 BL 선택 상자가 화면 밖으로 나가지 않게 */
+#api-bl{max-width:100%;min-width:0;}
+label:has(> #api-bl){min-width:0;max-width:100%;}

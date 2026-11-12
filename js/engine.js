@@ -383,6 +383,63 @@
     }).join('');
   }
 
+  /* ---------- 워드(.docx) — 기획자가 보낸 「물품설명서양식_워드」와 같은 짜임 ----------
+   * A4 · 여백 위 30mm 나머지 25.4mm · 맑은 고딕. 제목 「물 품 설 명 서」(20pt 굵게 가운데) →
+   * 절마다 제목(16pt 굵게) · 작성 안내 「☞ …」(12pt) · 본문(12pt). 부품마다 새 쪽에서 시작한다.
+   * 양식 원본 파일은 저장소에 두지 않고, 같은 짜임을 여기서 만든다. */
+  var DOCX_GUIDE = {
+    name: ['Invoice 품명, 거래품명, 상표명, 모델, 타입, 규격, HS CODE 등'],
+    structure: ['내부적 주요 구성요소, 구성요소별 기능, 내부구조도, 블럭 다이어그램(흐름도)', '사진(Image), 재질 등'],
+    function: ['작동 원리, 주요 기능, 연결되는 주변기기와의 연관도', '주요 용도, 일반적 용도 등 상세설명서'],
+    composition: ['구성 성분 또는 제조사의 성분표, 구성 성분의 역할', '해당 물품의 제조방법, 제조공정 등'],
+    docs: ['해외 공급자 등이 제공한 HS품목번호', '제조사 카탈로그, 성분표, 제조사양 설명서, 용도설명서, 설계도면 등 (상세자료 붙임으로 첨부)'],
+    opinion: ['신청인이 해당 물품에 대한 분류의견을 갖고 있을 경우 HS품목번호와 그 사유 등을 자유롭게 기술']
+  };
+  function xesc(s) { return String(s == null ? '' : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function wRun(text, o) {
+    o = o || {};
+    var rpr = '<w:rPr><w:rFonts w:ascii="맑은 고딕" w:hAnsi="맑은 고딕" w:eastAsia="맑은 고딕"/>' + (o.bold ? '<w:b/>' : '') + (o.color ? '<w:color w:val="' + o.color + '"/>' : '') + '<w:sz w:val="' + (o.size || 24) + '"/><w:szCs w:val="' + (o.size || 24) + '"/></w:rPr>';
+    return '<w:r>' + rpr + '<w:t xml:space="preserve">' + xesc(text) + '</w:t></w:r>';
+  }
+  function wPara(text, o) {
+    o = o || {};
+    var ppr = '<w:pPr>' + (o.pageBreak ? '<w:pageBreakBefore/>' : '') + (o.keep ? '<w:keepNext/>' : '') + '<w:spacing w:before="' + (o.before || 0) + '" w:after="' + (o.after == null ? 60 : o.after) + '"/>' + (o.indent ? '<w:ind w:left="' + o.indent + '"/>' : '') + (o.center ? '<w:jc w:val="center"/>' : '') + '</w:pPr>';
+    return '<w:p>' + ppr + (text === '' ? '' : wRun(text, o)) + '</w:p>';
+  }
+  /** 본문 한 칸 → 문단들. 줄바꿈은 문단으로, 빈 줄도 그대로 둔다 */
+  function wBody(text) { var t = String(text == null ? '' : text).replace(/\r\n?/g, '\n'); return (t === '' ? [''] : t.split('\n')).map(function (l) { return wPara(l, { indent: 200 }); }).join(''); }
+  /**
+   * entries → word/document.xml 문자열. opt.guide === false 면 「☞」 작성 안내 줄을 뺀다.
+   * 1절 품명에는 입력한 값만 넣는다(없는 칸은 줄을 만들지 않는다). HS 는 후보라고 적는다.
+   */
+  function docxDocument(entries, labels, opt) {
+    labels = mergeLabels(labels); opt = opt || {};
+    var guide = function (k) { return opt.guide === false ? '' : (DOCX_GUIDE[k] || []).map(function (g) { return wPara('☞ ' + g, { color: '555555', after: 40 }); }).join(''); };
+    var head = function (n, t) { return wPara(n + '. ' + t, { size: 32, bold: true, before: 280, after: 100, keep: true }); };
+    var body = entries.map(function (e, i) {
+      var it = e.item, ai = e.sections.some(function (s) { return s.source === 'ai'; });
+      var hs = parseHS(it.hs).list.map(function (c) { return c.display; }).join(', ');
+      var l1 = [['품명', (it.name || '') + (it.nameEn ? ' (' + it.nameEn + ')' : '')], ['모델 · 품번', it.model], ['상표', it.brand], ['규격', it.size], ['적용 장비', it.machine], ['HS 후보(검토 필요)', hs], ['관리번호', it.id]].filter(function (x) { return String(x[1] == null ? '' : x[1]).trim() !== ''; });
+      return wPara(labels.title.length <= 6 ? labels.title.split('').join(' ') : labels.title, { size: 40, bold: true, center: true, after: 120, pageBreak: i > 0 }) +
+        wPara((ai ? 'AI 초안 반영 — 검토 필요' : '규칙 초안 — 검토 필요') + (e.check.missing.length ? ' · 누락 ' + e.check.missing.length + '건(' + e.check.missing.join(', ') + ')' : ''), { size: 18, color: '8A4B00', center: true, after: 160 }) +
+        head(1, '품명(모델, 규격 등 포함)') + guide('name') + (l1.map(function (x) { return wPara(x[0] + ' : ' + x[1], { indent: 200 }); }).join('') || wPara('', {})) +
+        e.sections.map(function (s, si) { return head(si + 2, labels[s.key] || s.label) + guide(s.key) + wBody(s.text); }).join('');
+    }).join('');
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' + body +
+      wPara('이 문서는 작성 보조 도구의 초안입니다. 품목분류의 최종 판단은 담당자가 합니다.', { size: 16, color: '777777', before: 300 }) +
+      '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1701" w:right="1440" w:bottom="1440" w:left="1440" w:header="851" w:footer="992" w:gutter="0"/></w:sectPr></w:body></w:document>';
+  }
+  /** .docx 안에 들어갈 파일들(경로 → 내용). 묶기(zip)는 화면에서 한다 */
+  function docxFiles(entries, labels, opt) {
+    return {
+      '[Content_Types].xml': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>',
+      '_rels/.rels': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>',
+      'word/_rels/document.xml.rels': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>',
+      'word/styles.xml': '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="맑은 고딕" w:hAnsi="맑은 고딕" w:eastAsia="맑은 고딕" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="en-US" w:eastAsia="ko-KR"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="60" w:line="300" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="a"><w:name w:val="Normal"/><w:pPr><w:wordWrap w:val="0"/><w:jc w:val="left"/></w:pPr></w:style></w:styles>',
+      'word/document.xml': docxDocument(entries, labels, opt)
+    };
+  }
+
   /* ---------- 예제 — 가짜 굴착기 부품 3건(실제 사내 데이터가 아닙니다) ---------- */
   function sample() {
     return [
@@ -416,6 +473,7 @@
     josa: josa, draft: draft, detectStyle: detectStyle, convertStyle: convertStyle, applyStyle: applyStyle,
     scrubRates: scrubRates, lint: lint, buildPrompt: buildPrompt, buildRequest: buildRequest,
     extractText: extractText, parseAIReply: parseAIReply, sheetRows: sheetRows, printHTML: printHTML,
+    DOCX_GUIDE: DOCX_GUIDE, docxDocument: docxDocument, docxFiles: docxFiles,
     sample: sample, sampleExample: sampleExample, esc: esc
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

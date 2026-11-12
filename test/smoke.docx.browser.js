@@ -33,6 +33,13 @@ srv.listen(0, async function () {
     ok(!/☞/.test(docText(f2).xml) && /2\. 구조 및 형태/.test(docText(f2).xml), '작성 안내 줄을 끄면 빠진다');
     var dx = await Promise.all([pg.waitForEvent('download', { timeout: 8000 }), pg.click('#btn-xlsx')]);
     ok(/\.xlsx$/.test(dx[0].suggestedFilename()), '엑셀 내보내기는 그대로');
+    for (var pgn of ['index.html', 'dashboard.html', 'tracking.html', 'errors.html', 'library.html', 'guide.html', 'plan.html']) {
+      await pg.goto(base + pgn);
+      var nav = await pg.$$eval('.topnav-links a', function (a) { return a.map(function (x) { return x.textContent.trim(); }).join(' > '); });
+      ok(nav === '대시보드 > 화물 추적 > 오류점수 > 물품설명서 > 자료 목록 > 사용법 > 기획서', '(v1.4.1) 메뉴 순서 — ' + pgn, nav);
+      ok(await pg.$$eval('.topnav-links a.active', function (a) { return a.length; }) === 1, '(v1.4.1) 지금 화면 표시 1개 — ' + pgn);
+    }
+    await pg.goto(base);
     await pg.setViewportSize({ width: 360, height: 800 });
     ok((await pg.evaluate(function () { return document.documentElement.scrollWidth - document.documentElement.clientWidth; })) <= 1, '360px 가로 넘침 없음');
     ok(errs.length === 0, '페이지 오류 없음', errs.join(' | '));

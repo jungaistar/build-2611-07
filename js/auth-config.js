@@ -221,18 +221,29 @@ window.AUTH_CONFIG = {
       ]
     },
     "landing": {
+      "company": {
+        "name": "HD건설기계",
+        "en": "HD CONSTRUCTION EQUIPMENT",
+        "logo": "images/logo.png",
+        "logoH": 24
+      },
       "slides": [
         {
-          "image": "images/slide-1.jpg"
+          "image": "images/slide-1.jpg",
+          "tone": "dark"
         },
         {
-          "image": "images/slide-2.jpg"
+          "image": "images/slide-2.jpg",
+          "tone": "dark"
         },
         {
-          "image": "images/slide-3.jpg"
+          "image": "images/slide-3.jpg",
+          "tone": "dark"
         }
       ],
-      "heroMode": "slide"
+      "heroMode": "slide",
+      "headline": "AI 기반 수출입통관\n통합관리 DashBoard",
+      "lead": "수출입 신고부터 화물 진행현황, HS CODE 품목분류, FTA 원산지 관리, 관세 납부 및 환급까지 통관 업무 전반을 하나의 Dashboard에서 통합 관리합니다. AI 기반 데이터 분석으로 관세 절감 기회와 통관 리스크를 발굴하고, 더욱 빠르고 정확한 업무 환경을 구현합니다."
     }
   }
 };

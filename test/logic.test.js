@@ -144,7 +144,7 @@ has(html, '누락 1건', '인쇄: 누락 표시');
 not(D.printHTML([{ item: { id: '<b>' }, sections: [], check: { missing: [], warns: [] } }], {}), '<b>', '인쇄: HTML 이스케이프');
 
 
-/* ===================== v1.1 수출입통관 업무 대시보드 — js/customs.js ===================== */
+/* ===================== v1.1 수출입통관통합관리 DashBoard — js/customs.js ===================== */
 var v10 = passed + failed;
 var C = require('../js/customs.js');
 // JSON 비교는 Infinity·NaN 을 null 로 적어 버려 0 나누기를 못 잡는다 — null 은 === 로 본다

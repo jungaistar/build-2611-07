@@ -73,7 +73,7 @@ srv.listen(0, async function () {
     await pg.goto(base + 'guide.html');
     ok(/칸 이름/.test(await pg.textContent('main')), '사용법 페이지');
 
-    /* ===================== v1.1 수출입통관 업무 대시보드 ===================== */
+    /* ===================== v1.1 수출입통관통합관리 DashBoard ===================== */
     v10 = passed + failed;
     var XLSX = require('../lib/xlsx.full.min.js');
     ok(/대시보드/.test(await pg.textContent('#g-dash')), '사용법에 대시보드 절');

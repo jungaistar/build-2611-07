@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>물품설명서 작성 자동화 — 품목분류 질의용 초안</title>
+<title>수출입통관통합관리 DashBoard — 물품설명서 작성 자동화</title>
 <!-- seo-kit: 검색 · 공유 미리보기(주소를 옮기면 이 묶음의 주소를 내 주소로) -->
 <link rel="canonical" href="https://build-2611-07.jobability.co.kr/">
 <meta name="robots" content="index,follow">
@@ -30,16 +30,16 @@
 <link rel="stylesheet" href="css/app.css">
 <!-- auth-kit: 로그인 전에는 도구 화면을 감춘다(js/auth.js 가 판정 뒤 푼다) -->
 <script>document.documentElement.classList.add('auth-lock')</script>
-<link rel="stylesheet" href="css/auth.css?v=2026-11-13.12">
-<link rel="stylesheet" href="css/board.css?v=2026-11-13.12">
-<link rel="stylesheet" href="css/kit-build.css?v=2026-11-13.12">
+<link rel="stylesheet" href="css/auth.css?v=2026-11-13.13">
+<link rel="stylesheet" href="css/board.css?v=2026-11-13.13">
+<link rel="stylesheet" href="css/kit-build.css?v=2026-11-13.13">
 <!-- /auth-kit -->
 </head>
 <body>
 
 <nav class="topnav" aria-label="주요 메뉴">
   <div class="topnav-inner">
-    <a class="topnav-brand" href="dashboard.html">수출입통관 업무 대시보드 <small>build-2611-07 · 기획 최창섭</small></a>
+    <a class="topnav-brand" href="dashboard.html">수출입통관통합관리 DashBoard <small>build-2611-07 · 기획 최창섭</small></a>
     <ul class="topnav-links">
       <li><a href="dashboard.html">대시보드</a></li>
       <li><a href="tracking.html">화물 추적</a></li>
@@ -62,7 +62,7 @@
 
 <main><div class="wrap">
 
-<div class="note lead-link" id="lead-dash"><b>수출입통관 업무 대시보드</b> — ERP·환급·관세청 엑셀을 올려 수출입 통관 실적, FTA 절감액, 관세환급, 오류점수, 품목분류 결정문 현황을 한 화면에서 봅니다.
+<div class="note lead-link" id="lead-dash"><b>수출입통관통합관리 DashBoard</b> — ERP·환급·관세청 엑셀을 올려 수출입 통관 실적, FTA 절감액, 관세환급, 오류점수, 품목분류 결정문 현황을 한 화면에서 봅니다.
   <a href="dashboard.html">대시보드 열기</a> · <a href="dashboard.html#example" id="go-dash-sample">예제 대시보드 바로 보기</a> · <a href="tracking.html">v1.2 수입보세화물 추적(단계 알림 메일 초안)</a> · <a href="library.html">통관 서식·매뉴얼 자료 목록</a></div>
 <div class="note" id="main-samples" style="margin:12px 0"><b>대시보드 예제 엑셀 5종</b> — 수입통관 · 수출통관 · 관세환급 · 오류점수 · 품목분류 결정문(가짜 데이터)
     <div class="btnrow" style="margin:8px 0 6px"><button class="btn primary" type="button" data-ex5>예제 엑셀 5개 모두 내려받기</button><a class="btn" href="samples/예제_엑셀_5종.zip" download>ZIP 한 파일로 받기</a></div>
@@ -180,11 +180,11 @@ document.addEventListener('click', function (e) {
 });
 </script>
 <!-- auth-kit: 로그인 · 사용 신청 · 승인 · 게시판(키트 정본 data10-00/kit/auth, 적용 build-2611-00/tools/kit) -->
-<script src="vendor/supabase.js?v=2026-11-13.12"></script>
-<script src="js/auth-config.js?v=2026-11-13.12"></script>
-<script src="js/kit-build.js?v=2026-11-13.12"></script>
-<script src="js/board.js?v=2026-11-13.12"></script>
-<script src="js/auth.js?v=2026-11-13.12"></script>
+<script src="vendor/supabase.js?v=2026-11-13.13"></script>
+<script src="js/auth-config.js?v=2026-11-13.13"></script>
+<script src="js/kit-build.js?v=2026-11-13.13"></script>
+<script src="js/board.js?v=2026-11-13.13"></script>
+<script src="js/auth.js?v=2026-11-13.13"></script>
 <!-- /auth-kit -->
 </body>
 </html>

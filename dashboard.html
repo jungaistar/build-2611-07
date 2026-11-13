@@ -13,9 +13,9 @@
 <link rel="stylesheet" href="css/dash.css">
 <!-- auth-kit: 로그인 전에는 도구 화면을 감춘다(js/auth.js 가 판정 뒤 푼다) -->
 <script>document.documentElement.classList.add('auth-lock')</script>
-<link rel="stylesheet" href="css/auth.css?v=2026-11-13.9">
-<link rel="stylesheet" href="css/board.css?v=2026-11-13.9">
-<link rel="stylesheet" href="css/kit-build.css?v=2026-11-13.9">
+<link rel="stylesheet" href="css/auth.css?v=2026-11-13.10">
+<link rel="stylesheet" href="css/board.css?v=2026-11-13.10">
+<link rel="stylesheet" href="css/kit-build.css?v=2026-11-13.10">
 <!-- /auth-kit -->
 </head>
 <body>
@@ -72,11 +72,12 @@
   </label>
   <div class="btnrow">
     <button class="btn primary" id="btn-dash-sample">예제로 해보기</button>
-    <a class="btn" href="samples/예제_수입통관실적_ERP.xlsx" download>예제 엑셀 받기(수입)</a>
+    <a class="btn" id="btn-dash-zip" href="samples/예제_엑셀_5종.zip" download>예제 엑셀 5종 한꺼번에 받기(ZIP)</a>
     <button class="btn" id="btn-dash-clear" type="button">저장된 데이터 지우기</button>
   </div>
   <p class="sub" style="margin-top:10px">예제는 가짜 업체·본부의 2024-01~2025-10 데이터입니다. 예제 데이터는 실제 사내 데이터가 아닙니다.
-    예제 엑셀 5종은 <code>samples/</code> 폴더에 있습니다.</p>
+    </p>
+  <p class="sub" id="dash-samples">예제 엑셀 하나씩 받기 — <a href="samples/예제_수입통관실적_ERP.xlsx" download>수입통관 실적</a> · <a href="samples/예제_수출통관실적_ERP.xlsx" download>수출통관 실적</a> · <a href="samples/예제_관세환급실적.xlsx" download>관세환급 실적</a> · <a href="samples/예제_수출입오류점수.xlsx" download>수출입 오류점수</a> · <a href="samples/예제_품목분류결정문현황.xlsx" download>품목분류 결정문 현황</a></p>
   <label class="chk"><input type="checkbox" id="d-remember" checked> 올린 데이터를 이 브라우저에 기억하기(다음에 열 때 다시 올리지 않아도 됩니다)</label>
   <div id="d-msg"></div>
   <div id="d-sets"></div>
@@ -167,11 +168,11 @@
   });
 </script>
 <!-- auth-kit: 로그인 · 사용 신청 · 승인 · 게시판(키트 정본 data10-00/kit/auth, 적용 build-2611-00/tools/kit) -->
-<script src="vendor/supabase.js?v=2026-11-13.9"></script>
-<script src="js/auth-config.js?v=2026-11-13.9"></script>
-<script src="js/kit-build.js?v=2026-11-13.9"></script>
-<script src="js/board.js?v=2026-11-13.9"></script>
-<script src="js/auth.js?v=2026-11-13.9"></script>
+<script src="vendor/supabase.js?v=2026-11-13.10"></script>
+<script src="js/auth-config.js?v=2026-11-13.10"></script>
+<script src="js/kit-build.js?v=2026-11-13.10"></script>
+<script src="js/board.js?v=2026-11-13.10"></script>
+<script src="js/auth.js?v=2026-11-13.10"></script>
 <!-- /auth-kit -->
 </body>
 </html>

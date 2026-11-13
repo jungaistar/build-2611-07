@@ -40,6 +40,11 @@ srv.listen(0, async function () {
       ok(await pg.$$eval('.topnav-links a.active', function (a) { return a.length; }) === 1, '(v1.4.1) 지금 화면 표시 1개 — ' + pgn);
     }
     await pg.goto(base);
+    await pg.goto(base + 'dashboard.html');
+    var sl = await pg.$$eval('#dash-samples a', function (a) { return a.map(function (x) { return x.getAttribute('href'); }); }), bad = [];
+    for (var h of sl.concat([await pg.getAttribute('#btn-dash-zip', 'href')])) { var rr = await pg.request.get(base + encodeURI(h)); if (rr.status() !== 200 || (await rr.body()).length < 1000) bad.push(h); }
+    ok(sl.length === 5 && bad.length === 0, '(v1.4.2) 대시보드 — 예제 엑셀 5종 링크와 ZIP 이 모두 받아진다', bad.join());
+    await pg.goto(base);
     await pg.setViewportSize({ width: 360, height: 800 });
     ok((await pg.evaluate(function () { return document.documentElement.scrollWidth - document.documentElement.clientWidth; })) <= 1, '360px 가로 넘침 없음');
     ok(errs.length === 0, '페이지 오류 없음', errs.join(' | '));

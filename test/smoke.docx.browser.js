@@ -41,9 +41,16 @@ srv.listen(0, async function () {
     }
     await pg.goto(base);
     await pg.goto(base + 'dashboard.html');
-    var sl = await pg.$$eval('#dash-samples a', function (a) { return a.map(function (x) { return x.getAttribute('href'); }); }), bad = [];
-    for (var h of sl.concat([await pg.getAttribute('#btn-dash-zip', 'href')])) { var rr = await pg.request.get(base + encodeURI(h)); if (rr.status() !== 200 || (await rr.body()).length < 1000) bad.push(h); }
+    var sl = await pg.$$eval('#dash-samples a.ex-file', function (a) { return a.map(function (x) { return x.getAttribute('href'); }); }), bad = [];
+    for (var h of sl.concat(['samples/예제_엑셀_5종.zip'])) { var rr = await pg.request.get(base + encodeURI(h)); if (rr.status() !== 200 || (await rr.body()).length < 1000) bad.push(h); }
     ok(sl.length === 5 && bad.length === 0, '(v1.4.2) 대시보드 — 예제 엑셀 5종 링크와 ZIP 이 모두 받아진다', bad.join());
+    var got = []; pg.on('download', function (d) { got.push(d.suggestedFilename()); });
+    await pg.click('#dash-samples [data-ex5]'); await pg.waitForTimeout(4600);
+    ok(got.length === 5 && got.every(function (n) { return /^예제_.*\.xlsx$/.test(n); }) && new Set(got).size === 5, '(v1.4.3) 대시보드 — 단추 하나로 예제 엑셀 5개가 모두 내려받아진다', got.join());
+    await pg.goto(base); got.length = 0;
+    ok(await pg.$$eval('#main-samples a.ex-file', function (a) { return a.length; }) === 5, '(v1.4.3) 첫 쪽에도 예제 엑셀 5종');
+    await pg.click('#main-samples [data-ex5]'); await pg.waitForTimeout(4600);
+    ok(got.length === 5, '(v1.4.3) 첫 쪽 — 단추 하나로 5개 내려받기', got.join());
     await pg.goto(base);
     await pg.setViewportSize({ width: 360, height: 800 });
     ok((await pg.evaluate(function () { return document.documentElement.scrollWidth - document.documentElement.clientWidth; })) <= 1, '360px 가로 넘침 없음');

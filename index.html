@@ -4,27 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>물품설명서 작성 자동화 — 품목분류 질의용 초안</title>
-<meta name="description" content="부품 정보를 입력하거나 엑셀로 여러 건 올리면 품목분류 질의용 물품설명서(품명 / 구조 및 형태 / 기능 및 용도 / 성분(함량) 및 제조공정 / 제출서류 목록 / 품목분류 의견) 초안을 만들고 누락 항목을 점검합니다. 파일은 브라우저 안에서만 처리합니다.">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="canonical" href="https://aebonlee.github.io/build-2611-07/">
+<!-- seo-kit: 검색 · 공유 미리보기(주소를 옮기면 이 묶음의 주소를 내 주소로) -->
+<link rel="canonical" href="https://build-2611-07.jobability.co.kr/">
 <meta name="robots" content="index,follow">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="생성형 AI 업무자동화 전문가과정 · 2차수">
-<meta property="og:url" content="https://aebonlee.github.io/build-2611-07/">
-<meta property="og:title" content="물품설명서 작성 자동화 — 생성형 AI 업무자동화 전문가과정 2차수">
-<meta property="og:description" content="부품 정보를 넣으면 품목분류 질의용 물품설명서 초안과 누락 점검, 인쇄용 양식·엑셀을 만듭니다.">
-<meta property="og:image" content="https://aebonlee.github.io/build-2611-07/og-index.png">
+<meta property="og:site_name" content="HD건설기계">
+<meta property="og:title" content="HD건설기계 · AI 기반 수출입통관 통합관리 DashBoard">
+<meta property="og:description" content="수출입 신고부터 화물 진행현황, HS CODE 품목분류, FTA 원산지 관리, 관세 납부 및 환급까지 통관 업무 전반을 하나의 Dashboard에서 통합 관리합니다. AI 기반 데이터 분석으로 관세 절감 기회와 통관 리스크를 발굴하고, 더욱 빠르고 정확한 업무 환경을 구현합니다.">
+<meta property="og:url" content="https://build-2611-07.jobability.co.kr/">
+<meta property="og:image" content="https://build-2611-07.jobability.co.kr/og-image.png">
+<meta property="og:image:secure_url" content="https://build-2611-07.jobability.co.kr/og-image.png">
+<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AI 기반 수출입통관 통합관리 DashBoard">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HD건설기계 · AI 기반 수출입통관 통합관리 DashBoard">
+<meta name="twitter:description" content="수출입 신고부터 화물 진행현황, HS CODE 품목분류, FTA 원산지 관리, 관세 납부 및 환급까지 통관 업무 전반을 하나의 Dashboard에서 통합 관리합니다. AI 기반 데이터 분석으로 관세 절감 기회와 통관 리스크를 발굴하고, 더욱 빠르고 정확한 업무 환경을 구현합니다.">
+<meta name="twitter:image" content="https://build-2611-07.jobability.co.kr/og-image.png">
+<!-- /seo-kit -->
+<meta name="description" content="수출입 신고부터 화물 진행현황, HS CODE 품목분류, FTA 원산지 관리, 관세 납부 및 환급까지 통관 업무 전반을 하나의 Dashboard에서 통합 관리합니다. AI 기반 데이터 분석으로 관세 절감 기회와 통관 리스크를 발굴하고, 더욱 빠르고 정확한 업무 환경을 구현합니다.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/app.css">
 <!-- auth-kit: 로그인 전에는 도구 화면을 감춘다(js/auth.js 가 판정 뒤 푼다) -->
 <script>document.documentElement.classList.add('auth-lock')</script>
-<link rel="stylesheet" href="css/auth.css?v=2026-11-13.10">
-<link rel="stylesheet" href="css/board.css?v=2026-11-13.10">
-<link rel="stylesheet" href="css/kit-build.css?v=2026-11-13.10">
+<link rel="stylesheet" href="css/auth.css?v=2026-11-13.11">
+<link rel="stylesheet" href="css/board.css?v=2026-11-13.11">
+<link rel="stylesheet" href="css/kit-build.css?v=2026-11-13.11">
 <!-- /auth-kit -->
 </head>
 <body>
@@ -56,6 +64,9 @@
 
 <div class="note lead-link" id="lead-dash"><b>수출입통관 업무 대시보드</b> — ERP·환급·관세청 엑셀을 올려 수출입 통관 실적, FTA 절감액, 관세환급, 오류점수, 품목분류 결정문 현황을 한 화면에서 봅니다.
   <a href="dashboard.html">대시보드 열기</a> · <a href="dashboard.html#example" id="go-dash-sample">예제 대시보드 바로 보기</a> · <a href="tracking.html">v1.2 수입보세화물 추적(단계 알림 메일 초안)</a> · <a href="library.html">통관 서식·매뉴얼 자료 목록</a></div>
+<div class="note" id="main-samples" style="margin:12px 0"><b>대시보드 예제 엑셀 5종</b> — 수입통관 · 수출통관 · 관세환급 · 오류점수 · 품목분류 결정문(가짜 데이터)
+    <div class="btnrow" style="margin:8px 0 6px"><button class="btn primary" type="button" data-ex5>예제 엑셀 5개 모두 내려받기</button><a class="btn" href="samples/예제_엑셀_5종.zip" download>ZIP 한 파일로 받기</a></div>
+    <span class="sub">하나씩 받기 — <a class="ex-file" href="samples/예제_수입통관실적_ERP.xlsx" download>수입통관 실적</a> · <a class="ex-file" href="samples/예제_수출통관실적_ERP.xlsx" download>수출통관 실적</a> · <a class="ex-file" href="samples/예제_관세환급실적.xlsx" download>관세환급 실적</a> · <a class="ex-file" href="samples/예제_수출입오류점수.xlsx" download>수출입 오류점수</a> · <a class="ex-file" href="samples/예제_품목분류결정문현황.xlsx" download>품목분류 결정문 현황</a></span></div>
 
 <section id="s-input" class="card">
   <h2 style="margin-top:0">1. 부품 정보를 넣으세요</h2>
@@ -159,12 +170,21 @@
 <script src="lib/xlsx.full.min.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/app.js"></script>
+<script>
+/* 예제 엑셀 5개를 차례로 내려받는다(브라우저가 「여러 파일 내려받기」를 물으면 허용) */
+document.addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('[data-ex5]') : null; if (!b) return;
+  var box = b.closest('.note'), list = [].slice.call(box.querySelectorAll('a.ex-file'));
+  list.forEach(function (a, i) { setTimeout(function () { var x = document.createElement('a'); x.href = a.getAttribute('href'); x.download = decodeURIComponent(a.getAttribute('href').split('/').pop()); document.body.appendChild(x); x.click(); x.remove(); }, i * 700); });
+  b.textContent = '내려받는 중… (5개)'; setTimeout(function () { b.textContent = '예제 엑셀 5개 모두 내려받기'; }, list.length * 700 + 600);
+});
+</script>
 <!-- auth-kit: 로그인 · 사용 신청 · 승인 · 게시판(키트 정본 data10-00/kit/auth, 적용 build-2611-00/tools/kit) -->
-<script src="vendor/supabase.js?v=2026-11-13.10"></script>
-<script src="js/auth-config.js?v=2026-11-13.10"></script>
-<script src="js/kit-build.js?v=2026-11-13.10"></script>
-<script src="js/board.js?v=2026-11-13.10"></script>
-<script src="js/auth.js?v=2026-11-13.10"></script>
+<script src="vendor/supabase.js?v=2026-11-13.11"></script>
+<script src="js/auth-config.js?v=2026-11-13.11"></script>
+<script src="js/kit-build.js?v=2026-11-13.11"></script>
+<script src="js/board.js?v=2026-11-13.11"></script>
+<script src="js/auth.js?v=2026-11-13.11"></script>
 <!-- /auth-kit -->
 </body>
 </html>
